@@ -31,7 +31,7 @@ open class TenClock : UIControl{
     open var delegate:TenClockDelegate?
     //overall inset. Controls all sizes.
     @IBInspectable var insetAmount: CGFloat = 40
-    @IBInspectable var useGradient = false
+    @IBInspectable public var useGradient = false
     var internalShift: CGFloat = 5;
     var pathWidth:CGFloat = 54
 
@@ -142,8 +142,8 @@ open class TenClock : UIControl{
         return proj(tailAngle)
     }
 
-    var centerTextDisplay: CenterTextDisplay = .times
-    enum CenterTextDisplay {
+    public var centerTextDisplay: CenterTextDisplay = .times
+    public enum CenterTextDisplay {
         case duration
         case times
     }
