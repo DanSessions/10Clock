@@ -250,13 +250,17 @@ open class TenClock : UIControl{
 
     }
     func updateGradientLayer() {
-        guard useGradient == true else {
-            return
+        let headGradientColor: UIColor = tintColor
+        let tailGradientColor: UIColor
+        
+        if useGradient {
+            tailGradientColor = tintColor.modified(withAdditionalHue: -0.08, additionalSaturation: 0.15, additionalBrightness: 0.2)
+        } else {
+            tailGradientColor = headGradientColor
         }
         
         gradientLayer.colors =
-            [tintColor,
-                tintColor.modified(withAdditionalHue: -0.08, additionalSaturation: 0.15, additionalBrightness: 0.2)]
+            [headGradientColor, tailGradientColor]
                 .map(disabledFormattedColor)
                 .map{$0.cgColor}
         gradientLayer.mask = overallPathLayer
