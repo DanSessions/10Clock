@@ -53,8 +53,9 @@ class ViewController: UITableViewController, TenClockDelegate {
     @IBAction func enabledValueChanged(_ sender: AnyObject) {
         clock.disabled = !clock.disabled
     }
-    @IBAction func gradientValueChanged(_ sender: AnyObject) {
-        
+    @IBAction func gradientValueChanged(_ sender: UISegmentedControl) {
+        clock.useGradient = sender.selectedSegmentIndex == 0
+        clock.update()
     }
     @IBOutlet var cells: [UITableViewCell]!
     @IBOutlet var labels: [UILabel]!
@@ -94,6 +95,7 @@ class ViewController: UITableViewController, TenClockDelegate {
         clock.startDate = Date()
         clock.endDate = Date().addingTimeInterval(-60 * 60 * 8 )
         clock.update()
+
         clock.delegate = self
     }
     override func viewWillAppear(_ animated: Bool) {
