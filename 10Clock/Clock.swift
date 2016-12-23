@@ -29,6 +29,8 @@ func medStepFunction(_ val: CGFloat, stepSize:CGFloat) -> CGFloat{
 open class TenClock : UIControl{
 
     open var delegate:TenClockDelegate?
+    @IBInspectable public var headText = "Start"
+    @IBInspectable public var tailText = "End"
     //overall inset. Controls all sizes.
     @IBInspectable var insetAmount: CGFloat = 40
     @IBInspectable public var useGradient = false
@@ -289,10 +291,10 @@ open class TenClock : UIControl{
 
 
     func tlabel(_ str:String, color:UIColor? = nil) -> CATextLayer{
-        let f = UIFont.preferredFont(forTextStyle: UIFontTextStyle.caption2)
+        let f = UIFont.preferredFont(forTextStyle: UIFontTextStyle.caption1)
         let cgFont = CTFontCreateWithName(f.fontName as CFString?, f.pointSize/2,nil)
         let l = CATextLayer()
-        l.bounds.size = CGSize(width: 30, height: 15)
+        l.bounds.size = CGSize(width: 40, height: 15)
         l.fontSize = f.pointSize
         l.foregroundColor =  disabledFormattedColor(color ?? tintColor).cgColor
         l.alignmentMode = kCAAlignmentCenter
@@ -325,8 +327,8 @@ open class TenClock : UIControl{
         topTailLayer.fillColor = disabledFormattedColor(tailBackgroundColor).cgColor
         topHeadLayer.sublayers?.forEach({$0.removeFromSuperlayer()})
         topTailLayer.sublayers?.forEach({$0.removeFromSuperlayer()})
-        let stText = tlabel("Start", color: disabledFormattedColor(headTextColor))
-        let endText = tlabel("End",color: disabledFormattedColor(tailTextColor))
+        let stText = tlabel(headText, color: disabledFormattedColor(headTextColor))
+        let endText = tlabel(tailText, color: disabledFormattedColor(tailTextColor))
         stText.position = topTailLayer.center
         endText.position = topHeadLayer.center
         topHeadLayer.addSublayer(endText)
@@ -359,7 +361,7 @@ open class TenClock : UIControl{
         let f = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title1)
         let cgFont = CTFontCreateWithName(f.fontName as CFString?, f.pointSize/2,nil)
 //        let titleTextLayer = CATextLayer()
-        titleTextLayer.bounds.size = CGSize( width: titleTextInset.size.width, height: 50)
+        titleTextLayer.bounds.size = CGSize( width: titleTextInset.size.width, height: 100)
         titleTextLayer.fontSize = f.pointSize
         titleTextLayer.alignmentMode = kCAAlignmentCenter
         titleTextLayer.foregroundColor = disabledFormattedColor(centerTextColor ?? tintColor).cgColor
