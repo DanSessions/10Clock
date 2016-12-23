@@ -158,12 +158,12 @@ open class TenClock : UIControl{
 //        return calendar.dateByAddingComponents(comps, toDate: Date().startOfDay as Date, options: .init(rawValue:0))!
     }
     open var startDate: Date{
-        get{return angleToTime(headAngle) }
-        set{ headAngle = timeToAngle(newValue) }
+        get{ return angleToTime(tailAngle) }
+        set{ tailAngle = timeToAngle(newValue) }
     }
     open var endDate: Date{
-        get{return angleToTime(tailAngle) }
-        set{ tailAngle = timeToAngle(newValue) }
+        get{ return angleToTime(headAngle) }
+        set{ headAngle = timeToAngle(newValue) }
     }
 
     var internalRadius:CGFloat {
