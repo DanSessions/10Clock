@@ -33,7 +33,7 @@ open class TenClock : UIControl{
     @IBInspectable public var tailText = "End"
     //overall inset. Controls all sizes.
     @IBInspectable var insetAmount: CGFloat = 40
-    @IBInspectable public var useGradient = false
+    @IBInspectable public var useGradient = true
     var internalShift: CGFloat = 5;
     var pathWidth:CGFloat = 54
 
