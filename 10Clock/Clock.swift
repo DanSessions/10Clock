@@ -31,6 +31,7 @@ open class TenClock : UIControl{
     open var delegate:TenClockDelegate?
     //overall inset. Controls all sizes.
     @IBInspectable var insetAmount: CGFloat = 40
+    @IBInspectable var useGradient = false
     var internalShift: CGFloat = 5;
     var pathWidth:CGFloat = 54
 
@@ -141,6 +142,12 @@ open class TenClock : UIControl{
         return proj(tailAngle)
     }
 
+    var centerTextDisplay: CenterTextDisplay = .times
+    enum CenterTextDisplay {
+        case duration
+        case times
+    }
+    
     lazy internal var calendar = Calendar(identifier:Calendar.Identifier.gregorian)
     func toDate(_ val:CGFloat)-> Date {
 //        var comps = DateComponents()
@@ -241,7 +248,10 @@ open class TenClock : UIControl{
 
     }
     func updateGradientLayer() {
-
+        guard useGradient == true else {
+            return
+        }
+        
         gradientLayer.colors =
             [tintColor,
                 tintColor.modified(withAdditionalHue: -0.08, additionalSaturation: 0.15, additionalBrightness: 0.2)]
@@ -363,7 +373,17 @@ open class TenClock : UIControl{
             fiveMinIncrements += (24 * (60/5))
         }
         
-        titleTextLayer.string = "\(fiveMinIncrements / 12)hr \((fiveMinIncrements % 12) * 5)min"
+        let text: String
+        switch centerTextDisplay {
+        case .duration:
+            text = "\(fiveMinIncrements / 12)hr \((fiveMinIncrements % 12) * 5)min"
+        case .times:
+            let formatter = DateFormatter()
+            formatter.timeStyle = .short
+            text = "\(formatter.string(from: startDate)) \nto\n \(formatter.string(from: endDate))"
+        }
+        titleTextLayer.string = text
+        
         titleTextLayer.position = gradientLayer.center
 
     }
