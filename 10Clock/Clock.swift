@@ -11,9 +11,9 @@ import UIKit
 
 @objc public  protocol TenClockDelegate {
     //Executed for every touch.
-    @objc optional func timesUpdated(_ clock:TenClock, startDate:Date,  endDate:Date  ) -> ()
+    @objc optional func timesUpdated(_ clock:TenClock, startDate:Date, endDate:Date, headMoved: Bool, tailMoved: Bool) -> ()
     //Executed after the user lifts their finger from the control.
-    @objc optional func timesChanged(_ clock:TenClock, startDate:Date,  endDate:Date  ) -> ()
+    @objc optional func timesChanged(_ clock:TenClock, startDate:Date, endDate:Date, headMoved: Bool, tailMoved: Bool) -> ()
 }
 func medStepFunction(_ val: CGFloat, stepSize:CGFloat) -> CGFloat{
     let dStepSize = Double(stepSize)
@@ -127,8 +127,8 @@ open class TenClock : UIControl{
         return disabled ? color.greyscale : color
     }
 
-
-
+    var headMoved = false
+    var tailMoved = false
 
     var trackWidth:CGFloat {return pathWidth }
     func proj(_ theta:Angle) -> CGPoint{
@@ -158,12 +158,12 @@ open class TenClock : UIControl{
 //        return calendar.dateByAddingComponents(comps, toDate: Date().startOfDay as Date, options: .init(rawValue:0))!
     }
     open var startDate: Date{
-        get{ return angleToTime(tailAngle) }
-        set{ tailAngle = timeToAngle(newValue) }
-    }
-    open var endDate: Date{
         get{ return angleToTime(headAngle) }
         set{ headAngle = timeToAngle(newValue) }
+    }
+    open var endDate: Date{
+        get{ return angleToTime(tailAngle) }
+        set{ tailAngle = timeToAngle(newValue) }
     }
 
     var internalRadius:CGFloat {
@@ -290,7 +290,7 @@ open class TenClock : UIControl{
             radius: trackRadius,
             startAngle: ( twoPi  ) -  ((tailAngle - headAngle) >= twoPi ? tailAngle - twoPi : tailAngle),
             endAngle: ( twoPi ) -  headAngle,
-            clockwise: true).cgPath
+            clockwise: false).cgPath
     }
 
 
@@ -331,12 +331,12 @@ open class TenClock : UIControl{
         topTailLayer.fillColor = disabledFormattedColor(tailBackgroundColor).cgColor
         topHeadLayer.sublayers?.forEach({$0.removeFromSuperlayer()})
         topTailLayer.sublayers?.forEach({$0.removeFromSuperlayer()})
-        let stText = tlabel(headText, color: disabledFormattedColor(headTextColor))
-        let endText = tlabel(tailText, color: disabledFormattedColor(tailTextColor))
-        stText.position = topTailLayer.center
-        endText.position = topHeadLayer.center
-        topHeadLayer.addSublayer(endText)
-        topTailLayer.addSublayer(stText)
+        let headTextLayer = tlabel(headText, color: disabledFormattedColor(headTextColor))
+        let tailTextLayer = tlabel(tailText, color: disabledFormattedColor(tailTextColor))
+        headTextLayer.position = topHeadLayer.center
+        tailTextLayer.position = topTailLayer.center
+        topHeadLayer.addSublayer(headTextLayer)
+        topTailLayer.addSublayer(tailTextLayer)
     }
 
 
@@ -518,18 +518,23 @@ open class TenClock : UIControl{
 
         }
 
+        headMoved = false
+        tailMoved = false
+        
         switch(layer){
         case headLayer:
             if (shouldMoveHead) {
-            pointMover = pointerMoverProducer({ _ in self.headAngle}, {self.headAngle += $0; self.tailAngle += 0})
+                headMoved = true
+                pointMover = pointerMoverProducer({ _ in self.headAngle}, {self.headAngle += $0; self.tailAngle += 0})
             } else {
                 pointMover = nil
             }
         case tailLayer:
-            if (shouldMoveHead) {
-            pointMover = pointerMoverProducer({_ in self.tailAngle}, {self.headAngle += 0;self.tailAngle += $0})
-                } else {
-                    pointMover = nil
+            if (shouldMoveTail) {
+                tailMoved = true
+                pointMover = pointerMoverProducer({_ in self.tailAngle}, {self.headAngle += 0;self.tailAngle += $0})
+            } else {
+                pointMover = nil
             }
         case pathLayer:
             if (shouldMoveHead) {
@@ -564,14 +569,14 @@ open class TenClock : UIControl{
 //        }
 //        do something
 //        valueChanged = false
-        delegate?.timesChanged?(self, startDate: self.startDate, endDate: endDate)
+        delegate?.timesChanged?(self, startDate: self.startDate, endDate: endDate, headMoved: headMoved, tailMoved: tailMoved)
     }
     override open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first, let pointMover = pointMover else { return }
 //        print(touch.locationInView(self))
         pointMover(touch.location(in: self))
         
-    	delegate?.timesUpdated?(self, startDate: self.startDate, endDate: endDate)
+    	delegate?.timesUpdated?(self, startDate: startDate, endDate: endDate, headMoved: headMoved, tailMoved: tailMoved)
         
 
     }
