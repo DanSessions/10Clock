@@ -305,6 +305,9 @@ open class TenClock : UIControl{
         l.contentsScale = UIScreen.main.scale
         l.font = cgFont
         l.string = str
+        l.accessibilityLabel = str
+        l.isAccessibilityElement = true
+        l.accessibilityValue = str
 
         return l
     }
