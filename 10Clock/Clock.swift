@@ -365,10 +365,10 @@ open class TenClock : UIControl{
         }
     }
     func updateWatchFaceTitle(){
-        let f = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title1)
+        let f = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title2)
         let cgFont = CTFontCreateWithName(f.fontName as CFString?, f.pointSize/2,nil)
 //        let titleTextLayer = CATextLayer()
-        titleTextLayer.bounds.size = CGSize( width: titleTextInset.size.width, height: 100)
+        titleTextLayer.bounds.size = CGSize( width: titleTextInset.size.width, height: 80)
         titleTextLayer.fontSize = f.pointSize
         titleTextLayer.alignmentMode = kCAAlignmentCenter
         titleTextLayer.foregroundColor = disabledFormattedColor(centerTextColor ?? tintColor).cgColor
